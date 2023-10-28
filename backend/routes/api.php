@@ -2,10 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\AttendeeController;
 
-use App\Http\Controllers\AsistentesController;
-use App\Http\Controllers\SecurityAuthController;
-use App\Http\Controllers\Auth\RegisterController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -17,27 +16,15 @@ use App\Http\Controllers\Auth\RegisterController;
 |
 */
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [UserController::class, 'register']);
+Route::post('/login', [UserController::class, 'login']);
+Route::get('attendees_index', [AttendeeController::class, 'index']);
+Route::post('attendees_add', [AttendeeController::class,'store']);
+    
 
+// Definimos las rutas del CRUD de asistentes bajo el middleware de autenticación
+Route::middleware('auth:sanctum')->group(function() {
 
-Route::middleware('auth:sanctum')->group(function () {
-    // Rutas para Asistentes
-    Route::apiResource('/asistentes', AsistentesController::class);
-    Route::post('/logout',[SecurityAuthController::class,'logout']);
+    Route::post('/logout', [UserController::class, 'logout']);
+    Route::apiResource('attendees', AttendeeController::class);
 });
-
-
-// Rutas para Asistentes
-Route::post('/asistentes', [AsistentesController::class, 'store']); // Crear un asistente
-Route::get('/asistentes', [AsistentesController::class, 'index']);  // Listar todos los asistentes
-Route::get('/asistentes/{id}', [AsistentesController::class, 'show']); // Ver un asistente específico por ID
-Route::put('/asistentes/{id}', [AsistentesController::class, 'update']); // Actualizar un asistente por ID
-Route::delete('/asistentes/{id}', [AsistentesController::class, 'destroy']); // Eliminar un asistente por ID
-
-// Ruta para registrar un nuevo usuario
-//Route::post('/register', [RegisterController::class, 'register'])->name('register');
-//Route::post('/register', [RegisterController::class, 'register']);
-
-//Route::post('login',[SecurityAuthController::class,'registro'])->name('login');
-
